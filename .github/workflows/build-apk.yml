@@ -29,10 +29,10 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up .NET 8
+      - name: Set up .NET 10
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.x'
 
       - name: Install MAUI Android workload
         run: dotnet workload install maui-android
@@ -42,7 +42,7 @@ jobs:
           set -e
           SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
           yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
-          "$SDKMANAGER" "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+          "$SDKMANAGER" "platforms;android-35" "build-tools;35.0.0" "platform-tools"
 
       - name: Generate signing keystore
         run: |
