@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="456" height="456" viewBox="0 0 456 456" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Generic over-the-air / key glyph, white on transparent -->
+  <circle cx="228" cy="228" r="150" stroke="#FFFFFF" stroke-width="22" fill="none"/>
+  <circle cx="228" cy="228" r="48" fill="#FFFFFF"/>
+  <path d="M228 96 V150 M228 306 V360 M96 228 H150 M306 228 H360"
+        stroke="#FFFFFF" stroke-width="22" stroke-linecap="round"/>
+</svg>
