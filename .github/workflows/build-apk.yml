@@ -58,7 +58,7 @@ jobs:
 
       - name: Publish signed APK
         run: |
-          dotnet publish "$PROJECT" -c Release -f net8.0-android \
+          dotnet publish "$PROJECT" -c Release -f net10.0-android \
             -p:AndroidPackageFormat=apk \
             -p:AndroidKeyStore=true \
             -p:AndroidSigningKeyStore="$KEYSTORE" \
