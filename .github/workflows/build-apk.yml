@@ -1,0 +1,81 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ net8-maui-port ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      PROJECT: Client/SuotaGoPlus/SuotaGoPlus.csproj
+      KEYSTORE: ${{ github.workspace }}/suota.keystore
+      KEY_ALIAS: suota
+      STORE_PASS: suotapass
+      KEY_PASS: suotapass
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android
+
+      - name: Install Android SDK packages
+        run: |
+          set -e
+          SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
+          "$SDKMANAGER" "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+
+      - name: Generate signing keystore
+        run: |
+          keytool -genkeypair -v \
+            -keystore "$KEYSTORE" \
+            -alias "$KEY_ALIAS" \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass "$STORE_PASS" -keypass "$KEY_PASS" \
+            -dname "CN=Suota Go Plus, O=Fork, C=AU"
+
+      - name: Restore
+        run: dotnet restore "$PROJECT"
+
+      - name: Publish signed APK
+        run: |
+          dotnet publish "$PROJECT" -c Release -f net8.0-android \
+            -p:AndroidPackageFormat=apk \
+            -p:AndroidKeyStore=true \
+            -p:AndroidSigningKeyStore="$KEYSTORE" \
+            -p:AndroidSigningKeyAlias="$KEY_ALIAS" \
+            -p:AndroidSigningStorePass="$STORE_PASS" \
+            -p:AndroidSigningKeyPass="$KEY_PASS"
+
+      - name: Collect APKs
+        run: |
+          mkdir -p artifacts
+          find . -name "*-Signed.apk" -exec cp {} artifacts/ \; || true
+          find . -path "*/bin/Release/*" -name "*.apk" -exec cp {} artifacts/ \; || true
+          ls -la artifacts
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: suota-go-plus-apk
+          path: artifacts/*.apk
+          if-no-files-found: error
