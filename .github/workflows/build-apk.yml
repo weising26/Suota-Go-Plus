@@ -14,7 +14,8 @@ jobs:
 
     env:
       PROJECT: Client/SuotaGoPlus/SuotaGoPlus.csproj
-      KEYSTORE: ${{ github.workspace }}/suota.keystore
+      # Throwaway, committed signing key so every build is upgrade-compatible.
+      KEYSTORE: ${{ github.workspace }}/Client/SuotaGoPlus/ci.keystore
       KEY_ALIAS: suota
       STORE_PASS: suotapass
       KEY_PASS: suotapass
@@ -43,15 +44,6 @@ jobs:
           SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
           yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
           "$SDKMANAGER" "platforms;android-35" "build-tools;35.0.0" "platform-tools"
-
-      - name: Generate signing keystore
-        run: |
-          keytool -genkeypair -v \
-            -keystore "$KEYSTORE" \
-            -alias "$KEY_ALIAS" \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass "$STORE_PASS" -keypass "$KEY_PASS" \
-            -dname "CN=Suota Go Plus, O=Fork, C=AU"
 
       - name: Restore
         run: dotnet restore "$PROJECT"

@@ -11,7 +11,8 @@
     <LangVersion>latest</LangVersion>
 
     <ApplicationTitle>Suota Go+</ApplicationTitle>
-    <ApplicationId>com.coderjesus.suota_pgp</ApplicationId>
+    <!-- Unique id so it never collides with a previously sideloaded com.coderjesus.suota_pgp. -->
+    <ApplicationId>com.coderjesus.suota_pgp.maui</ApplicationId>
     <ApplicationVersion>2</ApplicationVersion>
     <ApplicationDisplayVersion>2.0</ApplicationDisplayVersion>
 
